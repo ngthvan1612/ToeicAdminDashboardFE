@@ -1,10 +1,14 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
+  CButton,
   CCard,
   CCardBody,
   CCardHeader,
   CCol,
+  CLink,
+  CNavLink,
   CRow,
+  CSpinner,
   CTable,
   CTableBody,
   CTableCaption,
@@ -13,9 +17,24 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
-import { DocsExample } from 'src/components'
+import { listToeicFullTests } from 'src/api/toeicFullTest'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Dashboard = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [toeicFullTests, setToeicFullTests] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setIsLoading(true);
+    listToeicFullTests()
+      .then((resp) => {
+        const rawData = resp.data.data;
+        setToeicFullTests([...rawData]);
+        setIsLoading(false);
+      })
+  }, []);
+
   return (
     <>
       <CCard className="mb-4">
@@ -23,27 +42,45 @@ const Dashboard = () => {
           <strong>Toeic Full Test Manager</strong>
         </CCardHeader>
         <CCardBody>
-          <CTable striped hover>
-            <CTableHead>
-              <CTableRow>
-                <CTableHeaderCell scope="col">#</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Full name</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Slug</CTableHeaderCell>
-              </CTableRow>
-            </CTableHead>
-            <CTableBody>
-              <CTableRow>
-                <CTableHeaderCell scope="row">1</CTableHeaderCell>
-                <CTableDataCell>Mark</CTableDataCell>
-                <CTableDataCell>Otto</CTableDataCell>
-              </CTableRow>
-              <CTableRow>
-                <CTableHeaderCell scope="row">2</CTableHeaderCell>
-                <CTableDataCell>Jacob</CTableDataCell>
-                <CTableDataCell>Thornton</CTableDataCell>
-              </CTableRow>
-            </CTableBody>
-          </CTable>
+          {isLoading ? <CSpinner /> : (
+            <>
+              <CButton onClick={(() => navigate('/test-manager/tests/create'))}>Create New</CButton>
+              <CTable striped hover>
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell scope="col">#</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Full name</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Slug</CTableHeaderCell>
+                    <CTableHeaderCell scope="col"></CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {toeicFullTests.map((test, order) => {
+                    return (
+                      <CTableRow>
+                        <CTableHeaderCell scope="row" className='col-md-1'>{order + 1}</CTableHeaderCell>
+                        <CTableDataCell className='col-md-4'>{test.fullName}</CTableDataCell>
+                        <CTableDataCell className='col-md-4'>{test.slug}</CTableDataCell>
+                        <CTableDataCell className='col-md-2'>
+                          <CButton size='sm' color='warning' style={{ marginRight: '5px' }}>
+                            <Link
+                              to={`/test-manager/tests/update/${test.id}`}
+                              style={{ color: 'white', textDecoration: 'none' }}
+                            >
+                              Update
+                            </Link>
+                          </CButton>
+                          <CButton size='sm' color='danger' style={{ color: 'white' }}>
+                            Delete
+                          </CButton>
+                        </CTableDataCell>
+                      </CTableRow>
+                    )
+                  })}
+                </CTableBody>
+              </CTable>
+            </>
+          )}
         </CCardBody>
       </CCard>
     </>

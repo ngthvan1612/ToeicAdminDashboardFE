@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import {
   CButton,
   CCard,
@@ -11,8 +11,28 @@ import {
   CFormTextarea,
   CRow,
 } from '@coreui/react'
+import { createToeicFullTest } from "src/api/toeicFullTest"
+import { useNavigate } from "react-router-dom";
 
 const CreateToeicFullTest = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [toeicFullTestModel, setToeicFullTestModel] = useState({
+    fullName: ''
+  })
+
+  const navigate = useNavigate();
+
+  const handleCreateToeicFullTest = (e) => {
+    e.preventDefault();
+
+    setIsLoading(true);
+    createToeicFullTest(toeicFullTestModel)
+      .then(resp => {
+        navigate('/test-manager/tests')
+        setIsLoading(false);
+      })
+  }
+
   return (
     <CCard className="mb-4">
       <CCardHeader>
@@ -20,13 +40,15 @@ const CreateToeicFullTest = () => {
       </CCardHeader>
       <CCardBody>
         <CForm
-          method="POST"
+          onSubmit={(e) => handleCreateToeicFullTest(e)}
         >
           <div className="mb-3">
             <CFormLabel htmlFor="exampleFormControlInput1">Full name</CFormLabel>
             <CFormInput
               type="text"
               placeholder="ETS 2019 Test 03"
+              value={toeicFullTestModel.fullName}
+              onChange={(e) => setToeicFullTestModel({...toeicFullTestModel, fullName: e.target.value})}
             />
           </div>
           <div className="mb-3">
