@@ -18,12 +18,15 @@ import {
   CTableRow,
 } from '@coreui/react'
 import { listToeicFullTests } from 'src/api/toeicFullTest'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [toeicFullTests, setToeicFullTests] = useState([]);
-  const navigate = useNavigate();
+
+  const params = useParams();
+
+  const toeicFullTestId = params.toeicFullTestId;
 
   useEffect(() => {
     setIsLoading(true);
@@ -39,13 +42,11 @@ const Dashboard = () => {
     <>
       <CCard className="mb-4">
         <CCardHeader>
-          <strong>Toeic Full Test Manager</strong>
+          <strong>Test [{toeicFullTestId}]</strong>
         </CCardHeader>
         <CCardBody>
           {isLoading ? <CSpinner /> : (
             <>
-              <CButton onClick={(() => navigate('/test-manager/tests/create'))}>Create New</CButton>
-              <CButton onClick={(() => navigate('/test-manager/tests/backup'))} style={{ marginLeft: '5px' }}>Backup</CButton>
               <CTable striped hover>
                 <CTableHead>
                   <CTableRow>
