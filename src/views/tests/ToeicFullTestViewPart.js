@@ -4,85 +4,41 @@ import {
   CCard,
   CCardBody,
   CCardHeader,
-  CCol,
-  CLink,
-  CNavLink,
-  CRow,
   CSpinner,
   CTable,
   CTableBody,
-  CTableCaption,
   CTableDataCell,
   CTableHead,
   CTableHeaderCell,
   CTableRow,
 } from "@coreui/react";
-import { listToeicFullTests } from "src/api/toeicFullTest";
+import { getToeicPartByTestId } from "src/api/toeicPart";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 const ToeicFullTestViewPart = () => {
   const params = useParams();
-  const [isLoading, setIsLoading] = useState(true);
-  const [toeicFullTests, setToeicFullTests] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [partInfo, setPartInfo] = useState();
   const navigate = useNavigate();
 
   useEffect(() => {
+    let partItem;
     setIsLoading(true);
-    listToeicFullTests().then((resp) => {
+    getToeicPartByTestId(params.toeicFullTestId).then((resp) => {
       const rawData = resp.data.data;
-      setToeicFullTests([...rawData]);
+      partItem = rawData.find((part) => part.partNumber == params.partId);
+      setPartInfo(partItem);
+
       setIsLoading(false);
     });
   }, []);
 
-  const testPartList = [
-    {
-      name: "Photographs",
-      partId: params.partId,
-      id: 1,
-    },
-    {
-      name: "Photographs",
-      partId: params.partId,
-      id: 2,
-    },
-    {
-      name: "Photographs",
-      partId: params.partId,
-      id: 3,
-    },
-    {
-      name: "Photographs",
-      partId: params.partId,
-      id: 4,
-    },
-    {
-      name: "Photographs",
-      partId: params.partId,
-      id: 5,
-    },
-    {
-      name: "Photographs",
-      partId: params.partId,
-      id: 6,
-    },
-    {
-      name: "Photographs",
-      partId: params.partId,
-      id: 7,
-    },
-    {
-      name: "Photographs",
-      partId: params.partId,
-      id: 8,
-    },
-  ];
-
+  if (!partInfo) return <>loading..</>;
   return (
     <>
       <CCard className="mb-4">
         <CCardHeader>
-          <strong>Toeic Full Test Manager</strong>
+          <strong>{partInfo.toeicFullTestEntity.fullName}</strong>
         </CCardHeader>
         <CCardBody>
           {isLoading ? (
@@ -103,52 +59,49 @@ const ToeicFullTestViewPart = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {testPartList.map((test, order) => {
-                    return (
-                      <CTableRow>
-                        <CTableHeaderCell scope="row" className="col-md-1">
-                          {order + 1}
-                        </CTableHeaderCell>
-                        <CTableDataCell className="col-md-4">
-                          {test.name + " " + test.id}
-                        </CTableDataCell>
+                  {/* test part */}
+                  <CTableRow>
+                    <CTableHeaderCell scope="row" className="col-md-1">
+                      1
+                    </CTableHeaderCell>
+                    <CTableDataCell className="col-md-4">
+                      Part {partInfo.partNumber}
+                    </CTableDataCell>
 
-                        <CTableDataCell className="col-md-2">
-                          <CButton
-                            size="sm"
-                            color="success"
-                            style={{ marginRight: "5px" }}
-                          >
-                            <Link
-                              to={`/test-manager/tests/${test.id}/collections/${test.id}/questions`}
-                              style={{ color: "white", textDecoration: "none" }}
-                            >
-                              View
-                            </Link>
-                          </CButton>
-                          <CButton
-                            size="sm"
-                            color="warning"
-                            style={{ marginRight: "5px" }}
-                          >
-                            <Link
-                              to={`/test-manager/tests/update/${test.id}`}
-                              style={{ color: "white", textDecoration: "none" }}
-                            >
-                              Update
-                            </Link>
-                          </CButton>
-                          <CButton
-                            size="sm"
-                            color="danger"
-                            style={{ color: "white" }}
-                          >
-                            Delete
-                          </CButton>
-                        </CTableDataCell>
-                      </CTableRow>
-                    );
-                  })}
+                    <CTableDataCell className="col-md-2">
+                      <CButton
+                        size="sm"
+                        color="success"
+                        style={{ marginRight: "5px" }}
+                      >
+                        <Link
+                          to={`/test-manager/tests/${params.toeicFullTestId}/collections/${params.partId}/questions`}
+                          style={{ color: "white", textDecoration: "none" }}
+                        >
+                          View
+                        </Link>
+                      </CButton>
+                      <CButton
+                        size="sm"
+                        color="warning"
+                        style={{ marginRight: "5px" }}
+                      >
+                        <Link
+                          to={`/test-manager/tests/update/${params.partId}`}
+                          style={{ color: "white", textDecoration: "none" }}
+                        >
+                          Update
+                        </Link>
+                      </CButton>
+                      <CButton
+                        size="sm"
+                        color="danger"
+                        style={{ color: "white" }}
+                      >
+                        Delete
+                      </CButton>
+                    </CTableDataCell>
+                  </CTableRow>
                 </CTableBody>
               </CTable>
             </>

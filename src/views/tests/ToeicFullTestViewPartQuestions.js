@@ -4,10 +4,6 @@ import {
   CCard,
   CCardBody,
   CCardHeader,
-  CCol,
-  CLink,
-  CNavLink,
-  CRow,
   CSpinner,
   CTable,
   CTableBody,
@@ -16,75 +12,39 @@ import {
   CTableHead,
   CTableHeaderCell,
   CTableRow,
-  CModal,
-  CModalHeader,
-  CModalTitle,
-  CModalBody,
-  CModalFooter,
 } from "@coreui/react";
-import { listToeicFullTests } from "src/api/toeicFullTest";
+import { getToeicQuestion } from "src/api/toeicQuestion";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import QuestionModal from "./QuestionModal";
 
 const ToeicFullTestViewPartQuestions = () => {
   const params = useParams();
+  console.log(params);
   const [isLoading, setIsLoading] = useState(true);
-  const [toeicFullTests, setToeicFullTests] = useState([]);
+  const [questionList, setQuestionList] = useState();
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
-    listToeicFullTests().then((resp) => {
+    getToeicQuestion().then((resp) => {
       const rawData = resp.data.data;
-      setToeicFullTests([...rawData]);
+      const questionByPart = rawData.filter(
+        (data) =>
+          data.toeicQuestionGroupEntity.toeicPartEntity.partNumber ==
+          params.partId
+      );
+
+      const questionByPartAndTestId = questionByPart.filter(
+        (data) =>
+          data.toeicQuestionGroupEntity.toeicPartEntity.toeicFullTestEntity
+            .id == params.toeicFullTestId
+      );
+
+      setQuestionList(questionByPartAndTestId);
       setIsLoading(false);
     });
   }, []);
-
-  const testQuestionList = [
-    {
-      question: "question 1",
-      answer: "A",
-    },
-    {
-      question: "question 1",
-      answer: "A",
-    },
-    {
-      question: "question 1",
-      answer: "A",
-    },
-    {
-      question: "question 1",
-      answer: "A",
-    },
-
-    {
-      question: "question 1",
-      answer: "A",
-    },
-    {
-      question: "question 1",
-      answer: "A",
-    },
-    {
-      question: "question 1",
-      answer: "A",
-    },
-    {
-      question: "question 1",
-      answer: "A",
-    },
-    {
-      question: "question 1",
-      answer: "A",
-    },
-    {
-      question: "question 1",
-      answer: "A",
-    },
-  ];
 
   return (
     <>
@@ -112,14 +72,14 @@ const ToeicFullTestViewPartQuestions = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {testQuestionList.map((question, order) => {
+                  {questionList.map((question, order) => {
                     return (
                       <CTableRow>
                         <CTableHeaderCell scope="row" className="col-md-1">
                           {order + 1}
                         </CTableHeaderCell>
                         <CTableDataCell className="col-md-4">
-                          {question.question}
+                          Question {question.questionNumber}
                         </CTableDataCell>
 
                         <CTableDataCell className="col-md-2">
