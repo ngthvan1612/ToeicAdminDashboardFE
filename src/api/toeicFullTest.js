@@ -16,9 +16,25 @@ const updateToeicFullTest = async(toeicFullTest) => {
   return await contextInstance.put(`api/toeic/toeic-full-test/${toeicFullTest.id}`, toeicFullTest)
 }
 
+const backupToeicFullTestWithProgress = async(file, onUploadProgress) => {
+  const uploadFormData = new FormData();
+  uploadFormData.append("file", file);
+
+  return await contextInstance.post(
+    `api/toeic/backup-service/restore-toeic-test`,
+    uploadFormData, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      },
+      onUploadProgress: onUploadProgress
+    }
+  )
+}
+
 export {
   listToeicFullTests,
   getToeicFullTestById,
   createToeicFullTest,
-  updateToeicFullTest
+  updateToeicFullTest,
+  backupToeicFullTestWithProgress
 }
