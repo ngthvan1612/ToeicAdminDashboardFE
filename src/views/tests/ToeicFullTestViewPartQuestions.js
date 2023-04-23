@@ -23,7 +23,6 @@ const ToeicFullTestViewPartQuestions = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [questionList, setQuestionList] = useState();
   const navigate = useNavigate();
-  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -44,11 +43,11 @@ const ToeicFullTestViewPartQuestions = () => {
       setQuestionList(questionByPartAndTestId);
       setIsLoading(false);
     });
+    console.log(questionList);
   }, []);
 
   return (
     <>
-      <QuestionModal visible={visible} />
       <CCard className="mb-4">
         <CCardHeader>
           <strong>Toeic Full Test Manager</strong>
@@ -87,10 +86,9 @@ const ToeicFullTestViewPartQuestions = () => {
                             size="sm"
                             color="success"
                             style={{ marginRight: "5px" }}
-                            onClick={() => setVisible(!visible)}
                           >
                             <Link
-                              // to={`/test-manager/tests/1/collections/1`}
+                              to={`/test-manager/tests/${params.toeicFullTestId}/collections/${params.partId}/questions/${question.id}`}
                               style={{ color: "white", textDecoration: "none" }}
                             >
                               View

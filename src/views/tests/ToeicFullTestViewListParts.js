@@ -30,9 +30,9 @@ const Dashboard = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    listToeicFullTests().then((resp) => {
+    getToeicPartByTestId(params.toeicFullTestId).then((resp) => {
       const rawData = resp.data.data;
-      setToeicFullTests([...rawData]);
+      setTestCollections([...rawData]);
       setIsLoading(false);
     });
   }, []);

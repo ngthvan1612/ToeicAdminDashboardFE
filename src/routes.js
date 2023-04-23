@@ -23,6 +23,9 @@ const ToeicFullTestViewPartQuestions = React.lazy(() =>
 const Modal = React.lazy(() => {
   import("./views/notifications/modals/Modals");
 });
+const ToeicSingleQuestion = React.lazy(() =>
+  import("./views/tests/ToeicSingleQuestion")
+);
 
 const toeicRoutes = [
   { path: "/", exact: true, name: "Home" },
@@ -56,6 +59,10 @@ const toeicRoutes = [
   {
     path: "/modal",
     element: Modal,
+  },
+  {
+    path: "/test-manager/tests/:toeicFullTestId/collections/:partId/questions/:questionId",
+    element: ToeicSingleQuestion,
   },
 ];
 
