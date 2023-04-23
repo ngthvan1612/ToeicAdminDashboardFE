@@ -26,10 +26,14 @@ const Modal = React.lazy(() => {
 const ToeicSingleQuestion = React.lazy(() =>
   import("./views/tests/ToeicSingleQuestion")
 );
+const BackupToeicFullTest = React.lazy(() =>
+  import("./views/tests/BackupToeicFullTest")
+)
 
 const toeicRoutes = [
   { path: "/", exact: true, name: "Home" },
   { path: "/test-manager/tests", element: ToeicFullTest },
+  { path: "/test-manager/tests/backup", element: BackupToeicFullTest },
   {
     path: "/test-manager/tests/:toeicFullTestId/collections",
     element: ToeicFullTestAllParts,
