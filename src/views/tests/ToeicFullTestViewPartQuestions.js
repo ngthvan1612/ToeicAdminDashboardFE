@@ -45,7 +45,7 @@ const ToeicFullTestViewPartQuestions = () => {
     });
     console.log(questionList);
   }, []);
-
+  if (isLoading) return <>loading</>;
   return (
     <>
       <CCard className="mb-4">
@@ -88,7 +88,7 @@ const ToeicFullTestViewPartQuestions = () => {
                             style={{ marginRight: "5px" }}
                           >
                             <Link
-                              to={`/test-manager/tests/${params.toeicFullTestId}/collections/${params.partId}/questions/${question.id}`}
+                              to={`/test-manager/tests/${params.toeicFullTestId}/group/${params.partId}/questions/${question.id}`}
                               style={{ color: "white", textDecoration: "none" }}
                             >
                               View

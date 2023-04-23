@@ -9,4 +9,4 @@ const getToeicQuestionById = async (id) => {
 const getToeicQuestionByPartId = async (partId) => {
   return await contextInstance.get(`api/toeic/toeic-question/${partId}`);
 };
-export { getToeicQuestion, getToeicQuestionById };
+export { getToeicQuestion, getToeicQuestionById, getToeicQuestionByPartId };
