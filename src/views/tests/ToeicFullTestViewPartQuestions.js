@@ -31,7 +31,12 @@ const ToeicFullTestViewPartQuestions = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    if (params.partId == 3) {
+    if (
+      params.partId == 3 ||
+      params.partId == 4 ||
+      params.partId == 6 ||
+      params.partId == 7
+    ) {
       getToeicQuestionGroup().then((resp) => {
         const rawData = resp.data.data;
         const groupEntityList = rawData.filter(
@@ -68,7 +73,7 @@ const ToeicFullTestViewPartQuestions = () => {
       });
     }
   }, []);
-  if (isLoading) return <>d</>;
+  if (isLoading) return <>loading</>;
 
   return (
     <>
@@ -95,7 +100,10 @@ const ToeicFullTestViewPartQuestions = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {params.partId == 3 ? (
+                  {params.partId == 3 ||
+                  params.partId == 4 ||
+                  params.partId == 6 ||
+                  params.partId == 7 ? (
                     <>
                       {questionGroupList.map((questionGroup, order) => {
                         return (
@@ -155,7 +163,7 @@ const ToeicFullTestViewPartQuestions = () => {
                     </>
                   ) : (
                     <>
-                      {/* {questionList.map((question, order) => {
+                      {questionList.map((question, order) => {
                         return (
                           <CTableRow>
                             <CTableHeaderCell scope="row" className="col-md-1">
@@ -206,7 +214,7 @@ const ToeicFullTestViewPartQuestions = () => {
                             </CTableDataCell>
                           </CTableRow>
                         );
-                      })} */}
+                      })}
                     </>
                   )}
                 </CTableBody>
