@@ -17,7 +17,6 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 const ToeicFullTestAllParts = () => {
   const params = useParams();
-  console.log(params);
   const [isLoading, setIsLoading] = useState(true);
   const [testCollections, setTestCollections] = useState([]);
   const navigate = useNavigate();
@@ -76,7 +75,7 @@ const ToeicFullTestAllParts = () => {
                             style={{ marginRight: "5px" }}
                           >
                             <Link
-                              to={`/test-manager/tests/${test.id}/collections/${test.id}`}
+                              to={`/test-manager/tests/${params.toeicFullTestId}/group/${test.partNumber}`}
                               style={{ color: "white", textDecoration: "none" }}
                             >
                               View

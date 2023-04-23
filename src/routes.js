@@ -31,7 +31,7 @@ const toeicRoutes = [
   { path: "/", exact: true, name: "Home" },
   { path: "/test-manager/tests", element: ToeicFullTest },
   {
-    path: "/test-manager/tests/:toeicFullTestId/collections",
+    path: "/test-manager/tests/:toeicFullTestId/group",
     element: ToeicFullTestAllParts,
   },
 
@@ -45,11 +45,11 @@ const toeicRoutes = [
     element: ToeicFullTestViewListParts,
   },
   {
-    path: "/test-manager/tests/:toeicFullTestId/collections/:partId",
+    path: "/test-manager/tests/:toeicFullTestId/group/:partId",
     element: ToeicFullTestViewPart,
   },
   {
-    path: "/test-manager/tests/:toeicFullTestId/collections/:partId/questions",
+    path: "/test-manager/tests/:toeicFullTestId/group/:partId/questions",
     element: ToeicFullTestViewPartQuestions,
   },
   {
@@ -61,7 +61,7 @@ const toeicRoutes = [
     element: Modal,
   },
   {
-    path: "/test-manager/tests/:toeicFullTestId/collections/:partId/questions/:questionId",
+    path: "/test-manager/tests/:toeicFullTestId/group/:partId/questions/:questionId",
     element: ToeicSingleQuestion,
   },
 ];
