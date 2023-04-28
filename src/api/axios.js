@@ -13,6 +13,10 @@ const contextInstance = axios.create({
   baseURL: BASE_URL
 })
 
+const resolveBackendUrl = (path) => {
+  return BASE_URL + path;
+}
+
 export {
-  contextInstance
+  contextInstance, resolveBackendUrl
 }

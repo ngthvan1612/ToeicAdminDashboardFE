@@ -1,5 +1,6 @@
 import React from "react";
 
+// TEST
 const ToeicFullTest = React.lazy(() => import("./views/tests/ToeicFullTest"));
 const ToeicFullTestAllParts = React.lazy(() =>
   import("./views/tests/ToeicFullTestAllParts")
@@ -30,7 +31,12 @@ const BackupToeicFullTest = React.lazy(() =>
   import("./views/tests/BackupToeicFullTest")
 )
 
-const toeicRoutes = [
+// VOCABULARY
+const ToeicListVocabTopics = React.lazy(() =>
+  import("./views/vocabs/ToeicListVocabTopics")
+)
+
+const testRoutes = [
   { path: "/", exact: true, name: "Home" },
   { path: "/test-manager/tests", element: ToeicFullTest },
   { path: "/test-manager/tests/backup", element: BackupToeicFullTest },
@@ -70,4 +76,8 @@ const toeicRoutes = [
   },
 ];
 
-export default toeicRoutes;
+const vocabRoutes = [
+  { path: '/vocab-manager/topics', element: ToeicListVocabTopics }
+]
+
+export default [...testRoutes, ...vocabRoutes];
