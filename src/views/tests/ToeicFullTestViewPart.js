@@ -75,7 +75,7 @@ const ToeicFullTestViewPart = () => {
                         style={{ marginRight: "5px" }}
                       >
                         <Link
-                          to={`/test-manager/tests/${params.toeicFullTestId}/collections/${params.partId}/questions`}
+                          to={`/test-manager/tests/${params.toeicFullTestId}/group/${params.partId}/questions`}
                           style={{ color: "white", textDecoration: "none" }}
                         >
                           View

@@ -17,12 +17,13 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from "@coreui/react";
-import { listToeicFullTests } from "src/api/toeicFullTest";
+import { getToeicFullTestById } from "src/api/toeicFullTest";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-const Dashboard = () => {
+const ToeicFullTestViewListParts = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [toeicFullTests, setToeicFullTests] = useState([]);
+  // const [testCollections, setTestCollections] = useState([]);
 
   const params = useParams();
 
@@ -30,12 +31,15 @@ const Dashboard = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    getToeicPartByTestId(params.toeicFullTestId).then((resp) => {
+    getToeicFullTestById(toeicFullTestId).then((resp) => {
       const rawData = resp.data.data;
-      setTestCollections([...rawData]);
+      toeicFullTests.push(rawData);
+
       setIsLoading(false);
     });
   }, []);
+
+  if (isLoading) return <>loading</>;
 
   return (
     <>
@@ -77,7 +81,7 @@ const Dashboard = () => {
                             style={{ marginRight: "5px" }}
                           >
                             <Link
-                              to={`/test-manager/tests/${test.id}/collections`}
+                              to={`/test-manager/tests/${test.id}/group`}
                               style={{ color: "white", textDecoration: "none" }}
                             >
                               View
@@ -116,4 +120,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default ToeicFullTestViewListParts;
