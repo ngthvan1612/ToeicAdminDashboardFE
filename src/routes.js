@@ -36,6 +36,14 @@ const ToeicListVocabTopics = React.lazy(() =>
   import("./views/vocabs/ToeicListVocabTopics")
 )
 
+const ToeicListWordsByTopic = React.lazy(() =>
+  import("./views/vocabs/ToeicListWordsByTopic")
+)
+
+const ToeicWordDetail = React.lazy(() =>
+  import("./views/vocabs/ToeicWordDetail")
+)
+
 const testRoutes = [
   { path: "/", exact: true, name: "Home" },
   { path: "/test-manager/tests", element: ToeicFullTest },
@@ -77,7 +85,9 @@ const testRoutes = [
 ];
 
 const vocabRoutes = [
-  { path: '/vocab-manager/topics', element: ToeicListVocabTopics }
+  { path: '/vocab-manager/topics', element: ToeicListVocabTopics },
+  { path: '/vocab-manager/topics/:topicId', element: ToeicListWordsByTopic },
+  { path: '/vocab-manager/topics/:topicId/words/:wordId', element: ToeicWordDetail }
 ]
 
 export default [...testRoutes, ...vocabRoutes];

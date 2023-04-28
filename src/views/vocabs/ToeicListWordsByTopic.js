@@ -18,20 +18,26 @@ import {
   CTableRow,
 } from "@coreui/react";
 import { listToeicFullTests } from "src/api/toeicFullTest";
-import { Link, useNavigate } from "react-router-dom";
-import { getListTopics } from "src/api/toeicVocabSystem";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { getListTopics, getListWordsByTopicId } from "src/api/toeicVocabSystem";
 import { resolveBackendUrl } from "src/api/axios";
 
-const ToeicListVocabTopics = () => {
+const ToeicListWordsByTopic = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [vocabTopics, setVocabTopics] = useState([]);
+  const [wordList, setWordList] = useState([]);
+  const [topic, setTopic] = useState({});
   const navigate = useNavigate();
+  const params = useParams();
+
+  const { topicId } = params;
 
   useEffect(() => {
     setIsLoading(true);
-    getListTopics().then((resp) => {
+    getListWordsByTopicId(topicId).then((resp) => {
       const rawData = resp.data.data;
-      setVocabTopics([...rawData]);
+      const { wordList, topic } = rawData;
+      setWordList([...wordList]);
+      setTopic({ ...topic });
       setIsLoading(false);
     });
   }, []);
@@ -40,7 +46,7 @@ const ToeicListVocabTopics = () => {
     <>
       <CCard className="mb-4">
         <CCardHeader>
-          <strong>Vocabulary Topics Manager</strong>
+          <strong>Topic: {topic.topicName}</strong>
         </CCardHeader>
         <CCardBody>
           {isLoading ? (
@@ -48,42 +54,35 @@ const ToeicListVocabTopics = () => {
           ) : (
             <>
               <CButton size="sm">
-                Create New
-              </CButton>
-              <CButton
-                size="sm"
-                style={{ marginLeft: "5px" }}
-              >
-                Backup
+                Create new vocabulary
               </CButton>
               <CTable striped hover className="align-middle text-center">
                 <CTableHead>
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
-                    <CTableHeaderCell scope="col">Topic name</CTableHeaderCell>
-                    <CTableHeaderCell scope="col"></CTableHeaderCell>
+                    <CTableHeaderCell scope="col">English</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Vietnamese</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Image</CTableHeaderCell>
                     <CTableHeaderCell scope="col"></CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {vocabTopics.map((topic, order) => {
+                  {wordList.map((word, order) => {
                     return (
                       <CTableRow>
-                        <CTableHeaderCell scope="row" className="col-xs-auto">
+                        <CTableHeaderCell scope="row" className="col-md-auto">
                           {order + 1}
                         </CTableHeaderCell>
-                        <CTableDataCell className="col-md-auto">
-                          <div class="row">
-                            <div class="column-md-12">
-                              {topic.topicName}
-                            </div>
-                          </div>
+                        <CTableDataCell className="col-md-4">
+                          {word.english}
                         </CTableDataCell>
-                        <CTableDataCell className="col-md-auto">
+                        <CTableDataCell className="col-md-4">
+                          {word.vietnamese}
+                        </CTableDataCell>
+                        <CTableDataCell className="col-md-4">
                           <img
-                            loading="lazy"
-                            alt={topic.topicName + '-image'}
-                            src={resolveBackendUrl(topic.topicImageUrl)}
+                            alt={word.english + '-image'}
+                            src={resolveBackendUrl(word.imageUrl)}
                             style={{
                               maxWidth: 240,
                               height: 120,
@@ -91,7 +90,7 @@ const ToeicListVocabTopics = () => {
                             }}
                           />
                         </CTableDataCell>
-                        <CTableDataCell className="col-xs-auto">
+                        <CTableDataCell className="col-md-auto">
                           <div className="btn-group">
                             <CButton
                               size="sm"
@@ -99,19 +98,7 @@ const ToeicListVocabTopics = () => {
                               style={{ marginRight: "5px" }}
                             >
                               <Link
-                                to={`/vocab-manager/topics/${topic.topicId}`}
-                                style={{ color: "white", textDecoration: "none" }}
-                              >
-                                View
-                              </Link>
-                            </CButton>
-                            <CButton
-                              size="sm"
-                              color="warning"
-                              style={{ marginRight: "5px" }}
-                            >
-                              <Link
-                                to={`/test-manager/tests/update/${topic.topicId}`}
+                                to={`/vocab-manager/topics/${topic.topicId}/words/${word.id}`}
                                 style={{ color: "white", textDecoration: "none" }}
                               >
                                 Update
@@ -139,4 +126,4 @@ const ToeicListVocabTopics = () => {
   );
 };
 
-export default ToeicListVocabTopics;
+export default ToeicListWordsByTopic;
