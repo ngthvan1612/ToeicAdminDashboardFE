@@ -24,6 +24,16 @@ const createTopic = async(topicName, topicImage) => {
   })
 }
 
+const restoreVocabularyDatabase = async(backupFile, onUploadProgress) => {
+  const requestFormData = new FormData();
+
+  requestFormData.append("file", backupFile);
+
+  return contextInstance.post(`/api/toeic/toeic-system-vocabulary/restore-full-database`, requestFormData, {
+    onUploadProgress: onUploadProgress ?? function() { }
+  })
+}
+
 const createWord = async(word) => {
   return contextInstance.post(`/api/toeic/toeic-system-vocabulary/word`, word);
 }
@@ -55,6 +65,7 @@ const deleteWordById = async(wordId) => {
 export {
   createTopic,
   createWord,
+  restoreVocabularyDatabase,
   addWordAudio,
   getListTopics,
   getListWordsByTopicId,

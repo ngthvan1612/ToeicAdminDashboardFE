@@ -15,6 +15,8 @@ import {
   CModalHeader,
   CModalTitle,
   CNavLink,
+  CProgress,
+  CProgressBar,
   CRow,
   CSpinner,
   CTable,
@@ -27,7 +29,7 @@ import {
 } from "@coreui/react";
 import { listToeicFullTests } from "src/api/toeicFullTest";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { createTopic, getListTopics } from "src/api/toeicVocabSystem";
+import { createTopic, getListTopics, restoreVocabularyDatabase } from "src/api/toeicVocabSystem";
 import { resolveBackendUrl } from "src/api/axios";
 
 
@@ -38,7 +40,7 @@ const AddNewTopicModal = (props) => {
 
   const imageSelectionRef = useRef();
 
-  const onCreatedSuccessfully = props.onCreatedSuccessfully ?? function() { };
+  const onCreatedSuccessfully = props.onCreatedSuccessfully ?? function () { };
 
   const handleCreateTopic = (e) => {
     if (e) {
@@ -117,6 +119,100 @@ const AddNewTopicModal = (props) => {
   )
 }
 
+const BackupVocabularyModal = (props) => {
+  const [visible, setVisible] = useState(false)
+  const [backuping, setBackuping] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const backupFileRef = useRef();
+  const onBackupSuccessfully = props.onBackupSuccessfully ?? function() { }
+
+  const handleRestoreDatabase = () => {
+    if (backupFileRef.current == null)
+      return;
+
+    const files = backupFileRef.current.files;
+
+    if (files.length == 0) {
+      alert('Please select backup file!');
+      return;
+    }
+
+    const file = files[0];
+
+    setBackuping(true);
+
+    restoreVocabularyDatabase(file, (e) => {
+      const progressIntegerValue = Math.floor((e.progress + 0.001) * 100);
+      setProgress(progressIntegerValue);
+    })
+      .then(() => {
+        onBackupSuccessfully();
+        setBackuping(false);
+      })
+      .catch(err => {
+        alert(err.response.data.message);
+        setBackuping(false);
+      });
+  }
+
+  useEffect(() => {
+    if (backupFileRef.current != null) {
+      backupFileRef.current.value = null;
+    }
+  }, [visible])
+
+  return (
+    <>
+      <CButton size="sm" color="primary" className="text-white" style={{ marginLeft: 5 }} onClick={() => setVisible(!visible)}>Restore database</CButton>
+      <CModal backdrop="static" visible={visible} onClose={() => setVisible(false)}>
+        <CModalHeader
+          closeButton={!backuping}
+        >
+          <CModalTitle>
+            Restore database
+            {backuping && <>
+              &nbsp;<CSpinner size="sm" />
+            </>}
+          </CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <div className="mb-3">
+            <CFormLabel>Backup file (*.zip)</CFormLabel>
+            <CFormInput
+              type="file"
+              accept=".zip"
+              disabled={backuping}
+              ref={backupFileRef}
+            />
+          </div>
+          <div className="mb-3">
+            <CProgress>
+              <CProgressBar value={progress} animated variant="striped">
+                {progress > 98 ? <>Processing...</> : <>{progress} %</>}
+              </CProgressBar>
+            </CProgress>
+          </div>
+        </CModalBody>
+        <CModalFooter>
+          <CButton
+            color="secondary" onClick={() => setVisible(false)}
+            disabled={backuping}
+          >
+            Close
+          </CButton>
+          <CButton
+            color="primary"
+            onClick={() => handleRestoreDatabase()}
+            disabled={backuping}
+          >
+            Backup
+          </CButton>
+        </CModalFooter>
+      </CModal>
+    </>
+  )
+}
+
 const ToeicListVocabTopics = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [vocabTopics, setVocabTopics] = useState([]);
@@ -149,12 +245,9 @@ const ToeicListVocabTopics = () => {
               <AddNewTopicModal
                 onCreatedSuccessfully={refreshListTopics}
               />
-              <CButton
-                size="sm"
-                style={{ marginLeft: "5px" }}
-              >
-                Backup
-              </CButton>
+              <BackupVocabularyModal
+                onBackupSuccessfully={refreshListTopics}
+              />
               <CTable striped hover className="align-middle text-center">
                 <CTableHead>
                   <CTableRow>
