@@ -55,7 +55,7 @@ const testRoutes = [
     element: ToeicFullTestViewPartQuestions,
   },
   {
-    path: "/test-manager/tests/:toeicFullTestId/part/:partId/question-group/:questionId",
+    path: "/test-manager/tests/:toeicFullTestId/part/:partId/question-group/:questionGroupId",
     element: ToeicQuestionGroupDetail,
   },
   {
