@@ -126,7 +126,7 @@ const ToeicWordDetail = () => {
         </CCardHeader>
         <CCardBody>
           <CForm
-            
+
           >
             <CTable className="vertical-middle text-center">
               <CTableHead>
@@ -148,7 +148,7 @@ const ToeicWordDetail = () => {
                         </CTableDataCell>
                         <CTableDataCell
                         >
-                          <audio controls>
+                          <audio controls preload="none">
                             <source src={resolveBackendUrl(item.url)}/>
                           </audio>
                         </CTableDataCell>
