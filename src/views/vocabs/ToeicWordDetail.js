@@ -16,6 +16,7 @@ import {
   CModalHeader,
   CModalTitle,
   CRow,
+  CSpinner,
   CTable,
   CTableBody,
   CTableDataCell,
@@ -25,7 +26,7 @@ import {
 } from '@coreui/react'
 import { createToeicFullTest } from "src/api/toeicFullTest"
 import { useNavigate, useParams } from "react-router-dom";
-import { addWordAudio, deleteWordAudioById, getWordDetailByWordId } from "src/api/toeicVocabSystem";
+import { addWordAudio, deleteWordAudioById, getWordDetailByWordId, updateWordInformationByWordId } from "src/api/toeicVocabSystem";
 import { resolveBackendUrl } from "src/api/axios";
 import ButtonGroups from "../buttons/button-groups/ButtonGroups";
 import { Modal } from "@coreui/coreui";
@@ -120,6 +121,15 @@ const ToeicWordDetail = () => {
     pronounce: ''
   });
 
+  const handleChangeWordInformationFormData = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setWord({
+      ...word,
+      [name]: value
+    })
+  }
+
   const params = useParams();
 
   const { wordId } = params;
@@ -137,6 +147,16 @@ const ToeicWordDetail = () => {
     setIsLoading(false);
   }
 
+  const handleUpdateInformation = (e) => {
+    e.preventDefault();
+
+    const data = {...word};
+    delete data.audio;
+    updateWordInformationByWordId(wordId, data)
+      .then(() => refreshDataAsync())
+      .catch((err) => alert(err.response.data.message));
+  }
+
   useEffect(() => {
     refreshDataAsync()
   }, [])
@@ -149,7 +169,7 @@ const ToeicWordDetail = () => {
         </CCardHeader>
         <CCardBody>
           <CForm
-
+            onSubmit={(e) => handleUpdateInformation(e)}
           >
             <div className="mb-3">
               <CFormLabel htmlFor="exampleFormControlInput1">English</CFormLabel>
@@ -157,6 +177,9 @@ const ToeicWordDetail = () => {
                 type="text"
                 placeholder="Hello"
                 value={word.english}
+                disabled={isLoading}
+                name="english"
+                onChange={handleChangeWordInformationFormData}
               />
             </div>
 
@@ -166,6 +189,9 @@ const ToeicWordDetail = () => {
                 type="text"
                 placeholder="Xin chào"
                 value={word.vietnamese}
+                name="vietnamese"
+                onChange={handleChangeWordInformationFormData}
+                disabled={isLoading}
               />
             </div>
 
@@ -174,8 +200,11 @@ const ToeicWordDetail = () => {
               <CFormLabel htmlFor="exampleFormControlInput1">Pronounce</CFormLabel>
               <CFormInput
                 type="text"
-                placeholder="Xin chào"
+                placeholder="/abc/"
+                name="pronounce"
                 value={word.pronounce}
+                disabled={isLoading}
+                onChange={handleChangeWordInformationFormData}
               />
             </div>
 
@@ -183,8 +212,11 @@ const ToeicWordDetail = () => {
               <CFormLabel htmlFor="exampleFormControlInput1">Example English</CFormLabel>
               <CFormInput
                 type="text"
-                placeholder="Xin chào"
+                placeholder="Example"
+                name="exampleEnglish"
                 value={word.exampleEnglish}
+                disabled={isLoading}
+                onChange={handleChangeWordInformationFormData}
               />
             </div>
 
@@ -192,13 +224,20 @@ const ToeicWordDetail = () => {
               <CFormLabel htmlFor="exampleFormControlInput1">Example Vietnamese</CFormLabel>
               <CFormInput
                 type="text"
-                placeholder="Xin chào"
+                placeholder="Đây là ví dụ"
+                name="exampleVietnamese"
                 value={word.exampleVietnamese}
+                disabled={isLoading}
+                onChange={handleChangeWordInformationFormData}
               />
             </div>
 
             <div className="mb-3 text-center">
-              <CButton type="submit" color="success" style={{color: 'white'}}>Save changes</CButton>
+              <CButton type="submit" color="success" style={{color: 'white'}}
+                disabled={isLoading}>
+                {isLoading && <><CSpinner size="sm"/>&nbsp;</>}
+                Save changes
+              </CButton>
             </div>
           </CForm>
         </CCardBody>

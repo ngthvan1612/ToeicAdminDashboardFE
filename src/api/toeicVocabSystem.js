@@ -23,6 +23,10 @@ const getWordDetailByWordId = async(wordId) => {
   return contextInstance.get(`/api/toeic/toeic-system-vocabulary/word/${wordId}`);
 }
 
+const updateWordInformationByWordId = async(wordId, data) => {
+  return contextInstance.put(`/api/toeic/toeic-system-vocabulary/word/${wordId}`, data);
+}
+
 const deleteWordAudioById = async(audioId) => {
   return contextInstance.delete(`/api/toeic/toeic-system-vocabulary/audio/${audioId}`);
 }
@@ -32,5 +36,6 @@ export {
   getListTopics,
   getListWordsByTopicId,
   getWordDetailByWordId,
+  updateWordInformationByWordId,
   deleteWordAudioById
 }
