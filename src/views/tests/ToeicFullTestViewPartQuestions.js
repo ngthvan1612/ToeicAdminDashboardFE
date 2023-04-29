@@ -125,7 +125,7 @@ const ToeicFullTestViewPartQuestions = () => {
                                 style={{ marginRight: "5px" }}
                               >
                                 <Link
-                                  to={`/test-manager/tests/${params.toeicFullTestId}/group/${params.partId}/questions/group/${questionGroup.id}`}
+                                  to={`/test-manager/tests/${params.toeicFullTestId}/part/${params.partId}/question-group/${questionGroup.id}`}
                                   style={{
                                     color: "white",
                                     textDecoration: "none",
@@ -180,7 +180,7 @@ const ToeicFullTestViewPartQuestions = () => {
                                 style={{ marginRight: "5px" }}
                               >
                                 <Link
-                                  to={`/test-manager/tests/${params.toeicFullTestId}/group/${params.partId}/questions/${question.id}`}
+                                  to={`/test-manager/tests/${params.toeicFullTestId}/part/${params.partId}/question-group/${question.id}`}
                                   style={{
                                     color: "white",
                                     textDecoration: "none",
