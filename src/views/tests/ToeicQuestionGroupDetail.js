@@ -110,7 +110,7 @@ const ToeicSingleQuestion = () => {
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              {questionGroup.questionContents.map((content, order) => {
+              {questionGroup.questionContents?.map((content, order) => {
                 return (
                   <CTableRow>
                     <CTableDataCell className="col-md-auto">{order + 1}</CTableDataCell>
@@ -146,7 +146,7 @@ const ToeicSingleQuestion = () => {
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              {questionGroup.transcripts.map((content, order) => {
+              {questionGroup.transcripts?.map((content, order) => {
                 return (
                   <CTableRow>
                     <CTableDataCell className="col-md-auto">{order + 1}</CTableDataCell>
@@ -169,7 +169,7 @@ const ToeicSingleQuestion = () => {
           </div>
         </CCardBody>
       </CCard>
-      {questionGroup.questions.map(question => {
+      {questionGroup.questions?.map(question => {
         return (
           <CCard className="mb-3">
             <CCardHeader>Question {question.questionNumber}</CCardHeader>

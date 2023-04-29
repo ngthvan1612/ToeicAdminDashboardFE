@@ -13,7 +13,7 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from "@coreui/react";
-import { getToeicQuestion } from "src/api/toeicQuestion";
+import { getToeicQuestion, getToeicQuestionByPartId } from "src/api/toeicQuestion";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import QuestionModal from "./QuestionModal";
 import {
@@ -25,53 +25,20 @@ const ToeicFullTestViewPartQuestions = () => {
   const params = useParams();
   console.log(params);
   const [isLoading, setIsLoading] = useState(true);
-  const [questionList, setQuestionList] = useState();
   const [questionGroupList, setQuestionGroupList] = useState([]);
   const navigate = useNavigate();
 
+  const partId = params.partId;
+
   useEffect(() => {
     setIsLoading(true);
-    if (
-      params.partId == 3 ||
-      params.partId == 4 ||
-      params.partId == 6 ||
-      params.partId == 7
-    ) {
-      getToeicQuestionGroup().then((resp) => {
-        const rawData = resp.data.data;
-        const groupEntityList = rawData.filter(
-          (data) => data.toeicPartEntity.partNumber == params.partId
-        );
-        groupEntityList.map((item) => {
-          getToeicQuestionGroupById(item.id).then((res) => {
-            const groupData = res.data.data;
-            // questionGroupList.push(groupData);
-            setQuestionGroupList((questionGroupList) => [
-              ...questionGroupList,
-              groupData,
-            ]);
-          });
-        });
-      });
+    getToeicQuestionByPartId(partId).then((resp) => {
+      console.log(resp.data);
+      const rawData = resp.data.data;
+      setQuestionGroupList([...rawData]);
+    });
 
-      setIsLoading(false);
-    } else {
-      getToeicQuestion().then((resp) => {
-        const rawData = resp.data.data;
-        const questionByPart = rawData.filter(
-          (data) =>
-            data.toeicQuestionGroupEntity.toeicPartEntity.partNumber ==
-            params.partId
-        );
-        const questionByPartAndTestId = questionByPart.filter(
-          (data) =>
-            data.toeicQuestionGroupEntity.toeicPartEntity.toeicFullTestEntity
-              .id == params.toeicFullTestId
-        );
-        setQuestionList(questionByPartAndTestId);
-        setIsLoading(false);
-      });
-    }
+    setIsLoading(false);
   }, []);
   if (isLoading) return <>loading</>;
 
@@ -100,123 +67,61 @@ const ToeicFullTestViewPartQuestions = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {params.partId == 3 ||
-                  params.partId == 4 ||
-                  params.partId == 6 ||
-                  params.partId == 7 ? (
-                    <>
-                      {questionGroupList.map((questionGroup, order) => {
-                        return (
-                          <CTableRow>
-                            <CTableHeaderCell scope="row" className="col-md-1">
-                              {order + 1}
-                            </CTableHeaderCell>
-                            <CTableDataCell className="col-md-4">
-                              Question{" "}
-                              {questionGroup.questions.map(
-                                (question) => question.questionNumber + "   "
-                              )}
-                            </CTableDataCell>
+                  {questionGroupList.map((questionGroup, order) => {
+                    return (
+                      <CTableRow>
+                        <CTableHeaderCell scope="row" className="col-md-1">
+                          {order + 1}
+                        </CTableHeaderCell>
+                        <CTableDataCell className="col-md-4">
+                          Question{" "}
+                          {questionGroup.questions.map(
+                            (question) => question.questionNumber + "   "
+                          )}
+                        </CTableDataCell>
 
-                            <CTableDataCell className="col-md-2">
-                              <CButton
-                                size="sm"
-                                color="success"
-                                style={{ marginRight: "5px" }}
-                              >
-                                <Link
-                                  to={`/test-manager/tests/${params.toeicFullTestId}/part/${params.partId}/question-group/${questionGroup.id}`}
-                                  style={{
-                                    color: "white",
-                                    textDecoration: "none",
-                                  }}
-                                >
-                                  View
-                                </Link>
-                              </CButton>
-                              <CButton
-                                size="sm"
-                                color="warning"
-                                style={{ marginRight: "5px" }}
-                              >
-                                <Link
-                                  to={`/test-manager/tests/update/1`}
-                                  style={{
-                                    color: "white",
-                                    textDecoration: "none",
-                                  }}
-                                >
-                                  Update
-                                </Link>
-                              </CButton>
-                              <CButton
-                                size="sm"
-                                color="danger"
-                                style={{ color: "white" }}
-                              >
-                                Delete
-                              </CButton>
-                            </CTableDataCell>
-                          </CTableRow>
-                        );
-                      })}
-                    </>
-                  ) : (
-                    <>
-                      {questionList.map((question, order) => {
-                        return (
-                          <CTableRow>
-                            <CTableHeaderCell scope="row" className="col-md-1">
-                              {order + 1}
-                            </CTableHeaderCell>
-                            <CTableDataCell className="col-md-4">
-                              Question {question.questionNumber}
-                            </CTableDataCell>
-
-                            <CTableDataCell className="col-md-2">
-                              <CButton
-                                size="sm"
-                                color="success"
-                                style={{ marginRight: "5px" }}
-                              >
-                                <Link
-                                  to={`/test-manager/tests/${params.toeicFullTestId}/part/${params.partId}/question-group/${question.id}`}
-                                  style={{
-                                    color: "white",
-                                    textDecoration: "none",
-                                  }}
-                                >
-                                  View
-                                </Link>
-                              </CButton>
-                              <CButton
-                                size="sm"
-                                color="warning"
-                                style={{ marginRight: "5px" }}
-                              >
-                                <Link
-                                  to={`/test-manager/tests/update/1`}
-                                  style={{
-                                    color: "white",
-                                    textDecoration: "none",
-                                  }}
-                                >
-                                  Update
-                                </Link>
-                              </CButton>
-                              <CButton
-                                size="sm"
-                                color="danger"
-                                style={{ color: "white" }}
-                              >
-                                Delete
-                              </CButton>
-                            </CTableDataCell>
-                          </CTableRow>
-                        );
-                      })}
-                    </>
-                  )}
+                        <CTableDataCell className="col-md-2">
+                          <CButton
+                            size="sm"
+                            color="success"
+                            style={{ marginRight: "5px" }}
+                          >
+                            <Link
+                              to={`/test-manager/tests/${params.toeicFullTestId}/part/${params.partId}/question-group/${questionGroup.id}`}
+                              style={{
+                                color: "white",
+                                textDecoration: "none",
+                              }}
+                            >
+                              View
+                            </Link>
+                          </CButton>
+                          <CButton
+                            size="sm"
+                            color="warning"
+                            style={{ marginRight: "5px" }}
+                          >
+                            <Link
+                              to={`/test-manager/tests/update/1`}
+                              style={{
+                                color: "white",
+                                textDecoration: "none",
+                              }}
+                            >
+                              Update
+                            </Link>
+                          </CButton>
+                          <CButton
+                            size="sm"
+                            color="danger"
+                            style={{ color: "white" }}
+                          >
+                            Delete
+                          </CButton>
+                        </CTableDataCell>
+                      </CTableRow>
+                    );
+                  })}
                 </CTableBody>
               </CTable>
             </>
