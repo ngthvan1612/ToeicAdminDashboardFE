@@ -1,11 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   CButton,
   CCard,
   CCardBody,
   CCardHeader,
   CCol,
+  CForm,
+  CFormInput,
+  CFormLabel,
   CLink,
+  CModal,
+  CModalBody,
+  CModalFooter,
+  CModalHeader,
+  CModalTitle,
   CNavLink,
   CRow,
   CSpinner,
@@ -18,24 +26,115 @@ import {
   CTableRow,
 } from "@coreui/react";
 import { listToeicFullTests } from "src/api/toeicFullTest";
-import { Link, useNavigate } from "react-router-dom";
-import { getListTopics } from "src/api/toeicVocabSystem";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { createTopic, getListTopics } from "src/api/toeicVocabSystem";
 import { resolveBackendUrl } from "src/api/axios";
+
+
+const AddNewTopicModal = (props) => {
+  const [visible, setVisible] = useState(false)
+  const [topicName, setTopicName] = useState('');
+  const [imageDisplay, setImageDisplay] = useState(null);
+
+  const imageSelectionRef = useRef();
+
+  const onCreatedSuccessfully = props.onCreatedSuccessfully ?? function() { };
+
+  const handleCreateTopic = (e) => {
+    if (e) {
+      e.preventDefault();
+    }
+
+    if (!topicName.trim()) {
+      alert('Topic name cannot be null');
+      return;
+    }
+
+    if (imageSelectionRef.current.files.length == 0) {
+      alert('Please select topic image');
+      return;
+    }
+
+    const topicImage = imageSelectionRef.current.files[0];
+
+    createTopic(topicName, topicImage)
+      .then(() => onCreatedSuccessfully())
+      .catch(err => alert(err.response.data.message));
+  }
+
+  return (
+    <>
+      <CButton size="sm" color="success" className="text-white" onClick={() => setVisible(!visible)}>Add topic</CButton>
+      <CModal backdrop="static" visible={visible} onClose={() => setVisible(false)}>
+        <CModalHeader>
+          <CModalTitle>Add topic</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <CForm
+            onSubmit={(e) => handleCreateTopic(e)}
+          >
+            <div className="mb-3">
+              <CFormLabel>Voice</CFormLabel>
+              <CFormInput
+                type="text"
+                placeholder="Home"
+                value={topicName}
+                onChange={(e) => setTopicName(e.target.value)}
+              />
+            </div>
+            <div className="mb-3">
+              <CFormLabel>Topic image</CFormLabel>
+              <CFormInput
+                type="file"
+                placeholder="John"
+                accept="image/*"
+                ref={imageSelectionRef}
+                onChange={(e) => {
+                  if (e.target.files.length == 1) {
+                    const imageFile = e.target.files[0];
+                    setImageDisplay(URL.createObjectURL(imageFile));
+                  }
+                }}
+              />
+              <img
+                className="mt-3"
+                src={imageDisplay}
+                style={{
+                  maxWidth: '100%'
+                }}
+              />
+            </div>
+          </CForm>
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setVisible(false)}>
+            Close
+          </CButton>
+          <CButton color="primary" onClick={() => handleCreateTopic(null)}>Save changes</CButton>
+        </CModalFooter>
+      </CModal>
+    </>
+  )
+}
 
 const ToeicListVocabTopics = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [vocabTopics, setVocabTopics] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const refreshListTopics = () => {
     setIsLoading(true);
     getListTopics().then((resp) => {
       const rawData = resp.data.data;
       setVocabTopics([...rawData]);
       setIsLoading(false);
-    });
+    }).catch(err => setIsLoading(false));
+  }
+
+  useEffect(() => {
+    refreshListTopics();
   }, []);
-  if (isLoading) return <>loading</>;
+
   return (
     <>
       <CCard className="mb-4">
@@ -47,9 +146,9 @@ const ToeicListVocabTopics = () => {
             <CSpinner />
           ) : (
             <>
-              <CButton size="sm">
-                Create New
-              </CButton>
+              <AddNewTopicModal
+                onCreatedSuccessfully={refreshListTopics}
+              />
               <CButton
                 size="sm"
                 style={{ marginLeft: "5px" }}
@@ -103,18 +202,6 @@ const ToeicListVocabTopics = () => {
                                 style={{ color: "white", textDecoration: "none" }}
                               >
                                 View
-                              </Link>
-                            </CButton>
-                            <CButton
-                              size="sm"
-                              color="warning"
-                              style={{ marginRight: "5px" }}
-                            >
-                              <Link
-                                to={`/test-manager/tests/update/${topic.topicId}`}
-                                style={{ color: "white", textDecoration: "none" }}
-                              >
-                                Update
                               </Link>
                             </CButton>
                             <CButton

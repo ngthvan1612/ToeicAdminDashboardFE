@@ -1,12 +1,25 @@
 import { contextInstance } from "./axios";
 
 const addWordAudio = async(wordId, voice, audioFile) => {
-  const uploadFormData = new FormData();
-  uploadFormData.append("voice", voice);
-  uploadFormData.append("file", audioFile);
-  return contextInstance.post(`/api/toeic/toeic-system-vocabulary/word/${wordId}/add-audio`, uploadFormData, {
+  const requestFormData = new FormData();
+  requestFormData.append("voice", voice);
+  requestFormData.append("file", audioFile);
+  return contextInstance.post(`/api/toeic/toeic-system-vocabulary/word/${wordId}/add-audio`, requestFormData, {
     headers: {
       "Content-Type": "multipart/form-data"
+    }
+  })
+}
+
+const createTopic = async(topicName, topicImage) => {
+  const requestFormData = new FormData();
+
+  requestFormData.append("topicName", topicName);
+  requestFormData.append("image", topicImage);
+
+  return contextInstance.post(`/api/toeic/toeic-system-vocabulary/topic`, requestFormData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
     }
   })
 }
@@ -40,6 +53,7 @@ const deleteWordById = async(wordId) => {
 }
 
 export {
+  createTopic,
   createWord,
   addWordAudio,
   getListTopics,
