@@ -318,6 +318,19 @@ const _navToeic = [
     ],
   },
   {
+    component: CNavGroup,
+    name: "Vocabulary Manager",
+    to: "/vocab-manager",
+    icon: <CIcon icon={cilBook} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: "Topics",
+        to: "/vocab-manager/topics",
+      },
+    ],
+  },
+  {
     component: CNavItem,
     name: "Statistics",
     to: "statistics",
