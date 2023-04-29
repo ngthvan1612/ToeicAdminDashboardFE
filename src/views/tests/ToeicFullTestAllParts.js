@@ -18,14 +18,14 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 const ToeicFullTestAllParts = () => {
   const params = useParams();
   const [isLoading, setIsLoading] = useState(true);
-  const [testCollections, setTestCollections] = useState([]);
+  const [parts, setParts] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     setIsLoading(true);
     getToeicPartByTestId(params.toeicFullTestId).then((resp) => {
       const rawData = resp.data.data;
-      setTestCollections([...rawData]);
+      setParts([...rawData]);
       setIsLoading(false);
     });
   }, []);
@@ -38,7 +38,7 @@ const ToeicFullTestAllParts = () => {
     <>
       <CCard className="mb-4">
         <CCardHeader>
-          <strong>{testCollections[0].toeicFullTestEntity.fullName}</strong>
+          <strong>{parts[0].toeicFullTestEntity.fullName}</strong>
         </CCardHeader>
         <CCardBody>
           {isLoading ? (
@@ -59,14 +59,14 @@ const ToeicFullTestAllParts = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {testCollections.map((test, order) => {
+                  {parts.map((part, order) => {
                     return (
                       <CTableRow>
                         <CTableHeaderCell scope="row" className="col-md-1">
                           {order + 1}
                         </CTableHeaderCell>
                         <CTableDataCell className="col-md-4">
-                          Part {test.partNumber}
+                          Part {part.partNumber}
                         </CTableDataCell>
                         <CTableDataCell className="col-md-4">
                           <CButton
@@ -75,7 +75,7 @@ const ToeicFullTestAllParts = () => {
                             style={{ marginRight: "5px" }}
                           >
                             <Link
-                              to={`/test-manager/tests/${params.toeicFullTestId}/part/${test.partNumber}`}
+                              to={`/test-manager/tests/${params.toeicFullTestId}/part/${part.id}`}
                               style={{ color: "white", textDecoration: "none" }}
                             >
                               View
@@ -87,7 +87,7 @@ const ToeicFullTestAllParts = () => {
                             style={{ marginRight: "5px" }}
                           >
                             <Link
-                              to={`/test-manager/tests/update/${test.id}`}
+                              to={`/test-manager/tests/update/${part.id}`}
                               style={{ color: "white", textDecoration: "none" }}
                             >
                               Update

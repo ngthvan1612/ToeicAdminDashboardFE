@@ -180,15 +180,21 @@ const ToeicSingleQuestion = () => {
                 {question.choices.map(choice => {
                   if (choice.label == question.correctAnswer) {
                     return (
-                      <li class="list-group-item text-success fw-bolder">
-                        <b>{choice.label}</b>. {choice.content}
+                      <li class="list-group-item">
+                        <span className="text-success fw-bolder">
+                          <b>{choice.label}</b>. {choice.content}<br />
+                        </span>
+                        <i>Explain: <b>{choice.explain}</b></i>
                       </li>
                     )
                   }
                   else {
                     return (
                       <li class="list-group-item">
-                        <b>{choice.label}</b>. {choice.content}
+                        <span className="">
+                          <b>{choice.label}</b>. {choice.content}<br />
+                        </span>
+                        <i>Explain: <b>{choice.explain}</b></i>
                       </li>
                     )
                   }
