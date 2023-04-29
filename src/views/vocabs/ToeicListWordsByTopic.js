@@ -21,6 +21,7 @@ import { listToeicFullTests } from "src/api/toeicFullTest";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getListTopics, getListWordsByTopicId } from "src/api/toeicVocabSystem";
 import { resolveBackendUrl } from "src/api/axios";
+import ToeicCreateVocabularyModal from "./ToeicCreateVocabularyModal";
 
 const ToeicListWordsByTopic = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -31,7 +32,7 @@ const ToeicListWordsByTopic = () => {
 
   const { topicId } = params;
 
-  useEffect(() => {
+  const refreshListWords = () => {
     setIsLoading(true);
     getListWordsByTopicId(topicId).then((resp) => {
       const rawData = resp.data.data;
@@ -40,8 +41,12 @@ const ToeicListWordsByTopic = () => {
       setTopic({ ...topic });
       setIsLoading(false);
     });
+  }
+
+  useEffect(() => {
+    refreshListWords();
   }, []);
-  if (isLoading) return <>loading</>;
+
   return (
     <>
       <CCard className="mb-4">
@@ -53,9 +58,9 @@ const ToeicListWordsByTopic = () => {
             <CSpinner />
           ) : (
             <>
-              <CButton size="sm">
-                Create new vocabulary
-              </CButton>
+              <ToeicCreateVocabularyModal
+                onCreatedSuccessfully={refreshListWords}
+              />
               <CTable striped hover className="align-middle text-center">
                 <CTableHead>
                   <CTableRow>

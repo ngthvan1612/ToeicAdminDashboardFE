@@ -11,6 +11,10 @@ const addWordAudio = async(wordId, voice, audioFile) => {
   })
 }
 
+const createWord = async(word) => {
+  return contextInstance.post(`/api/toeic/toeic-system-vocabulary/word`, word);
+}
+
 const getListTopics = async() => {
   return contextInstance.get(`/api/toeic/toeic-system-vocabulary/topic`);
 }
@@ -32,6 +36,7 @@ const deleteWordAudioById = async(audioId) => {
 }
 
 export {
+  createWord,
   addWordAudio,
   getListTopics,
   getListWordsByTopicId,
