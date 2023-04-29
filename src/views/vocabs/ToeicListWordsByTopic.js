@@ -19,7 +19,7 @@ import {
 } from "@coreui/react";
 import { listToeicFullTests } from "src/api/toeicFullTest";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { getListTopics, getListWordsByTopicId } from "src/api/toeicVocabSystem";
+import { deleteWordAudioById, deleteWordById, getListTopics, getListWordsByTopicId } from "src/api/toeicVocabSystem";
 import { resolveBackendUrl } from "src/api/axios";
 import ToeicCreateVocabularyModal from "./ToeicCreateVocabularyModal";
 
@@ -113,6 +113,13 @@ const ToeicListWordsByTopic = () => {
                               size="sm"
                               color="danger"
                               style={{ color: "white" }}
+                              onClick={() => {
+                                if (confirm("Bạn có chắc chắc muốn xóa?")) {
+                                  deleteWordById(word.id)
+                                    .then(() => refreshListWords())
+                                    .catch(err => alert(err.response.data.message));
+                                }
+                              }}
                             >
                               Delete
                             </CButton>

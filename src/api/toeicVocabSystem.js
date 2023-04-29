@@ -35,6 +35,10 @@ const deleteWordAudioById = async(audioId) => {
   return contextInstance.delete(`/api/toeic/toeic-system-vocabulary/audio/${audioId}`);
 }
 
+const deleteWordById = async(wordId) => {
+  return contextInstance.delete(`/api/toeic/toeic-system-vocabulary/word/${wordId}`);
+}
+
 export {
   createWord,
   addWordAudio,
@@ -42,5 +46,6 @@ export {
   getListWordsByTopicId,
   getWordDetailByWordId,
   updateWordInformationByWordId,
-  deleteWordAudioById
+  deleteWordAudioById,
+  deleteWordById
 }
