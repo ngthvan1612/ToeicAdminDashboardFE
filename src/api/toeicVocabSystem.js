@@ -1,5 +1,16 @@
 import { contextInstance } from "./axios";
 
+const addWordAudio = async(wordId, voice, audioFile) => {
+  const uploadFormData = new FormData();
+  uploadFormData.append("voice", voice);
+  uploadFormData.append("file", audioFile);
+  return contextInstance.post(`/api/toeic/toeic-system-vocabulary/word/${wordId}/add-audio`, uploadFormData, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  })
+}
+
 const getListTopics = async() => {
   return contextInstance.get(`/api/toeic/toeic-system-vocabulary/topic`);
 }
@@ -13,6 +24,7 @@ const getWordDetailByWordId = async(wordId) => {
 }
 
 export {
+  addWordAudio,
   getListTopics,
   getListWordsByTopicId,
   getWordDetailByWordId

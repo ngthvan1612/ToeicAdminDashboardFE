@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import {
   CButton,
   CButtonGroup,
@@ -10,6 +10,11 @@ import {
   CFormInput,
   CFormLabel,
   CFormTextarea,
+  CModal,
+  CModalBody,
+  CModalFooter,
+  CModalHeader,
+  CModalTitle,
   CRow,
   CTable,
   CTableBody,
@@ -20,9 +25,88 @@ import {
 } from '@coreui/react'
 import { createToeicFullTest } from "src/api/toeicFullTest"
 import { useNavigate, useParams } from "react-router-dom";
-import { getWordDetailByWordId } from "src/api/toeicVocabSystem";
+import { addWordAudio, getWordDetailByWordId } from "src/api/toeicVocabSystem";
 import { resolveBackendUrl } from "src/api/axios";
 import ButtonGroups from "../buttons/button-groups/ButtonGroups";
+import { Modal } from "@coreui/coreui";
+
+const AddNewAudioModal = (props) => {
+  const [visible, setVisible] = useState(false)
+  const [voice, setVoice] = useState('');
+  const audioRef = useRef();
+  const params = useParams();
+  const { wordId } = params;
+
+  const onUploadedAudioSuccess = props.onUploadedAudioSuccess ?? function() { };
+
+  const handleSubmitAddNewAudio = (e) => {
+    if (e)
+      e.preventDefault();
+    if (audioRef.current.files.length == 0) {
+      alert('Ban chua chon file');
+      return;
+    }
+
+    addWordAudio(wordId, voice.trim(), audioRef.current.files[0])
+      .then(resp => {
+        onUploadedAudioSuccess();
+        setVisible(false);
+      })
+      .catch(err => {
+        const message = err.response.data.message;
+        alert(message);
+      })
+  }
+
+  useEffect(() => {
+    setVoice('');
+    if (audioRef.current != null) {
+      audioRef.current.value = null;
+    }
+  }, [visible])
+
+  return (
+    <>
+      <CButton size="sm" color="success" className="text-white" onClick={() => setVisible(!visible)}>Add new audio</CButton>
+      <CModal backdrop="static" visible={visible} onClose={() => setVisible(false)}>
+        <CModalHeader>
+          <CModalTitle>Add new audio</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <CForm
+            onSubmit={(e) => handleSubmitAddNewAudio(e)}
+          >
+            <div className="mb-3">
+              <CFormLabel>Voice</CFormLabel>
+              <CFormInput
+                type="text"
+                placeholder="John"
+                value={voice}
+                onChange={(e) => setVoice(e.target.value)}
+              />
+            </div>
+            <div className="mb-3">
+              <CFormLabel>File (*.wav, *.mp3)</CFormLabel>
+              <CFormInput
+                type="file"
+                placeholder="John"
+                accept=".wav,.mp3"
+                ref={audioRef}
+              />
+            </div>
+          </CForm>
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setVisible(false)}>
+            Close
+          </CButton>
+          <CButton color="primary" onClick={() => handleSubmitAddNewAudio(null)}>Save changes</CButton>
+        </CModalFooter>
+      </CModal>
+    </>
+  )
+}
+
 
 const ToeicWordDetail = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -125,6 +209,9 @@ const ToeicWordDetail = () => {
           <strong>Edit audio</strong>
         </CCardHeader>
         <CCardBody>
+          <AddNewAudioModal
+            onUploadedAudioSuccess={refreshDataAsync}
+          />
           <CForm
 
           >
