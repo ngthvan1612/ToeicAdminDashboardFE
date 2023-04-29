@@ -25,7 +25,7 @@ import {
 } from '@coreui/react'
 import { createToeicFullTest } from "src/api/toeicFullTest"
 import { useNavigate, useParams } from "react-router-dom";
-import { addWordAudio, getWordDetailByWordId } from "src/api/toeicVocabSystem";
+import { addWordAudio, deleteWordAudioById, getWordDetailByWordId } from "src/api/toeicVocabSystem";
 import { resolveBackendUrl } from "src/api/axios";
 import ButtonGroups from "../buttons/button-groups/ButtonGroups";
 import { Modal } from "@coreui/coreui";
@@ -241,7 +241,15 @@ const ToeicWordDetail = () => {
                         </CTableDataCell>
                         <CTableDataCell>
                           <CButtonGroup>
-                            <CButton size="sm" color="danger" className="text-white">Delete</CButton>
+                            <CButton size="sm" color="danger" className="text-white"
+                              onClick={() => {
+                                if (confirm("Bạn có chắc chắn xóa âm thanh này?")) {
+                                  deleteWordAudioById(item.audioId)
+                                    .then(() => refreshDataAsync())
+                                    .catch((err) => alert(err.response.data.message));
+                                }
+                              }}
+                            >Delete</CButton>
                           </CButtonGroup>
                         </CTableDataCell>
                       </CTableRow>
