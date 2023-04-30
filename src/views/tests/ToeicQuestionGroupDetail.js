@@ -1,8 +1,10 @@
 import { CCard, CCardHeader, CCardBody, CSpinner, CTable, CTableHead, CTableBody, CTableRow, CTableHeaderCell, CTableDataCell, CButton, CModal, CModalHeader, CModalTitle, CModalBody, CForm, CFormLabel, CFormInput, CModalFooter, CRow, CListGroup, CNavGroup } from "@coreui/react";
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getToeicQuestionGroupById } from "src/api/toeicQuestionGroup";
 import { resolveBackendUrl } from "src/api/axios";
+import { createToeicQuestion } from "src/api/toeicQuestion";
+import { createToeicQuestionItem } from "src/api/toeicItemContent";
 
 
 const ResolveToeicItemContent = ({ item }) => {
@@ -39,17 +41,30 @@ const HTMLEditor = (props) => {
 
 const ResolveToeicItemContentType = (props) => {
   const { type } = props;
+  const uploadFileRef = useRef();
+  const [content, setContent] = useState();
+
+  useEffect(() => {
+    console.log("content", content);
+    if (type == "AUDIO" || type == "IMAGE") {
+      const file = uploadFileRef.current.files[0];
+      props.setContentFromModal(file);
+    } else if (type == "HTML") {
+      props.setContentFromModal(content);
+    }
+  }, [content]);
+
   if (type == "AUDIO") {
     return (
-      <input type="file" />
+      <input type="file" ref={uploadFileRef} onChange={(e) => setContent(e.target.files[0])}/>
     )
   } else if (type == "IMAGE") {
     return (
-      <input type="file" />
+      <input type="file" ref={uploadFileRef} onChange={(e) => setContent(e.target.files)[0]}/>
     )
   } else if (type == "HTML") {
     return (
-      <textarea style={{ width: "200%", height: "200px" }}/>
+      <textarea style={{ width: "200%", height: "200px" }} onChange={(e) => setContent(e.target.value)}/>
     )
   } else {
     return <></>
@@ -58,8 +73,8 @@ const ResolveToeicItemContentType = (props) => {
 
 const AddGroupContent = (props) => {
   const [visible, setVisible] = useState(false);
-  const testContent = props.testContent;
   const  [type, setType] = useState('');
+  const [content, setContent] = useState();
 
   useEffect(() => {
     setType('AUDIO');
@@ -70,10 +85,53 @@ const AddGroupContent = (props) => {
     console.log(typeSelect);
   }
 
+  const setContentFromModal = (contentFromModal) => {
+    setContent(contentFromModal);
+  }
+
   const handleCreateResource = (e) => {
     if (e) {
       e.preventDefault();
     }
+
+    if (type == "AUDIO" || type == "IMAGE") {
+      createToeicQuestionItem({
+        contentType: type,
+        content: content,
+        questionContentId: parseInt(props.questionGroupId)
+      }).then(res => {
+        console.log(res);
+        if (res.status === 200) {
+          alert(res.data.message);
+          setVisible(false);
+        }
+      }).catch(err => {
+        console.log(err);
+      })
+      console.log("type: ", type);
+      console.log("questionContentId: ", props.questionGroupId);
+      console.log("contentFromModal: ", typeof(content))
+    } else if (type == "HTML") {
+      createToeicQuestionItem({
+        contentType: type,
+        stringContent: content,
+        questionContentId: parseInt(props.questionGroupId)
+      }).then(res => {
+        console.log(res);
+        if (res.status === 200) {
+          alert(res.data.message);
+          setVisible(false);
+        }
+      }).catch(err => {
+        console.log(err);
+      })
+      console.log("type: ", type);
+      console.log("questionContentId: ", typeof(parseInt(props.questionGroupId)));
+      console.log("contentFromModal: ", typeof(content))
+
+    }
+
+    
   }
 
   return (
@@ -97,7 +155,7 @@ const AddGroupContent = (props) => {
             </CTableRow>
             <CTableRow>
               <CFormLabel htmlFor="topic" style={{ marginRight: "10px" }}>Content</CFormLabel>
-              <ResolveToeicItemContentType type={type} />
+              <ResolveToeicItemContentType type={type} setContentFromModal={setContentFromModal}/>
             </CTableRow>
           </CForm>
         </CModalBody>
@@ -114,8 +172,8 @@ const AddGroupContent = (props) => {
 
 const AddGroupTranscript = (props) => {
   const [visible, setVisible] = useState(false);
-  const testContent = props.testContent;
   const  [type, setType] = useState('');
+  const [content, setContent] = useState();
 
   useEffect(() => {
     setType('AUDIO');
@@ -126,18 +184,61 @@ const AddGroupTranscript = (props) => {
     console.log(typeSelect);
   }
 
+  const setContentFromModal = (contentFromModal) => {
+    setContent(contentFromModal);
+  }
+
   const handleCreateResource = (e) => {
     if (e) {
       e.preventDefault();
     }
+
+    if (type == "AUDIO" || type == "IMAGE") {
+      createToeicQuestionItem({
+        contentType: type,
+        content: content,
+        questionTranscriptId: parseInt(props.questionGroupId)
+      }).then(res => {
+        console.log(res);
+        if (res.status === 200) {
+          alert(res.data.message);
+          setVisible(false);
+        }
+      }).catch(err => {
+        console.log(err);
+      })
+      console.log("type: ", type);
+      console.log("questionContentId: ", props.questionGroupId);
+      console.log("contentFromModal: ", typeof(content))
+    } else if (type == "HTML") {
+      createToeicQuestionItem({
+        contentType: type,
+        stringContent: content,
+        questionTranscriptId: parseInt(props.questionGroupId)
+      }).then(res => {
+        console.log(res);
+        if (res.status === 200) {
+          alert(res.data.message);
+          setVisible(false);
+        }
+      }).catch(err => {
+        console.log(err);
+      })
+      console.log("type: ", type);
+      console.log("questionContentId: ", typeof(parseInt(props.questionGroupId)));
+      console.log("contentFromModal: ", typeof(content))
+
+    }
+
+    
   }
 
   return (
     <>
-      <CButton size="sm" color="success" className="text-white" onClick={() => setVisible(!visible)}>Add group transcript</CButton>
+      <CButton size="sm" color="success" className="text-white" onClick={() => setVisible(!visible)}>Add group content</CButton>
       <CModal backdrop="static" visible={visible} onClose={() => setVisible(false)}>
         <CModalHeader>
-          <CModalTitle>Add group transcript</CModalTitle>
+          <CModalTitle>Add group content</CModalTitle>
         </CModalHeader>
         <CModalBody>
           <CForm
@@ -153,7 +254,7 @@ const AddGroupTranscript = (props) => {
             </CTableRow>
             <CTableRow>
               <CFormLabel htmlFor="topic" style={{ marginRight: "10px" }}>Content</CFormLabel>
-              <ResolveToeicItemContentType type={type} />
+              <ResolveToeicItemContentType type={type} setContentFromModal={setContentFromModal}/>
             </CTableRow>
           </CForm>
         </CModalBody>
@@ -167,6 +268,7 @@ const AddGroupTranscript = (props) => {
     </>
   )
 }
+
 
 const ChoiceModal = (props) => {
   const {choice} = props;
@@ -188,7 +290,7 @@ const ChoiceModal = (props) => {
 
 const AddQuestionModal = (props) => {
   const [visible, setVisible] = useState(false);
-  const testContent = props.testContent;
+  const {questionGroupId} = props;
   const [questionNumber, setQuestionnumber] = useState(0);
   const [question, setQuestion] = useState('');
   const [explain, setExplain] = useState('');
@@ -202,19 +304,34 @@ const AddQuestionModal = (props) => {
       e.preventDefault();
     }
   
-    if (!questionNumber.toString.trim()) {
-      alert('Question number cannot be null');
+    if (questionNumber == 0) {
+      alert('Question number cannot be zero');
       return;
     }
   
-    if (!correctAnswer.toString.trim()) {
+    if (correctAnswer.trim().length == 0) {
       alert('correct answer cannot be null');
       return;
     }
+    createToeicQuestion({
+      
+      questionNumber: questionNumber,
+      content: content,
+      toeicAnswers: choices,
+      correctAnswer: correctAnswer,
+      toeicQuestionGroupId: questionGroupId
+    }).then((res) => {
+      console.log(res)
+      if (res.status === 200) {
+        alert(res.data.message);
+        setVisible(false);
+      }
+    }).catch((err) => {
+      alert('Create question failed');
+    })
   }
 
   function fetchlistChoice() {
-    console.log(choices);
     return choices;
   }
 
@@ -331,7 +448,6 @@ const ToeicSingleQuestion = () => {
     getToeicQuestionGroupById(questionGroupId)
       .then(resp => {
         const questionGroupRaw = resp.data.data;
-        console.log(questionGroupRaw);
 
         setQuestionGroup({
           ...questionGroupRaw
@@ -379,7 +495,7 @@ const ToeicSingleQuestion = () => {
           <div className="mb-3">
             <div className="text-center">
               <AddGroupContent
-
+              questionGroupId={questionGroupId}
               />
             </div>
           </div>
@@ -414,8 +530,8 @@ const ToeicSingleQuestion = () => {
           </CTable>
           <div className="mb-3">
             <div className="text-center">
-              <AddGroupTranscript
-
+              <AddGroupTranscript 
+              questionGroupId={questionGroupId}
               />
             </div>
           </div>
@@ -459,7 +575,7 @@ const ToeicSingleQuestion = () => {
       
       <div className="mb-3">
           <div className="text-center">
-            <AddQuestionModal
+            <AddQuestionModal questionGroupId={questionGroupId}
             />
           </div>
         </div>
