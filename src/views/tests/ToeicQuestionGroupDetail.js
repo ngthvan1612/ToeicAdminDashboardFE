@@ -161,14 +161,13 @@ const AddQuestionModal = (props) => {
               />
             </div>
             <div className="mb-3">
-              <CFormLabel>Corect Answer
+              <CFormLabel>Corect Answer</CFormLabel>
               <CFormInput
                 type="text"
                 placeholder="A"
                 value={correctAnswer}
                 onChange={(e) => setCorrectAnswer(e.target.value)}
               />
-              </CFormLabel>
             </div>
             <div className="mb-3">
               <CFormLabel>Choice</CFormLabel>
@@ -195,7 +194,7 @@ const AddQuestionModal = (props) => {
                 onChange={(e) => setContent(e.target.value)}
               />
             </div>
-            <CButton color="secondary" onClick={() => addChoice()}>
+            <CButton color="success" onClick={() => addChoice()}>
               Add Choice
             </CButton>
           </CForm>
