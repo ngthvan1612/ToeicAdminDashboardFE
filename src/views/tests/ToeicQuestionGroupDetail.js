@@ -1,4 +1,4 @@
-import { CCard, CCardHeader, CCardBody, CSpinner, CContainer, CTable, CTableHead, CTableBody, CTableRow, CTableHeaderCell, CTableDataCell, CButton, CModal, CModalHeader, CModalTitle, CModalBody, CForm, CFormLabel, CFormInput, CModalFooter } from "@coreui/react";
+import { CCard, CCardHeader, CCardBody, CSpinner, CContainer, CTable, CTableHead, CTableBody, CTableRow, CTableHeaderCell, CTableDataCell, CButton, CModal, CModalHeader, CModalTitle, CModalBody, CForm, CFormLabel, CFormInput, CModalFooter, CRow, CListGroup } from "@coreui/react";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getToeicQuestionGroupById } from "src/api/toeicQuestionGroup";
@@ -68,10 +68,19 @@ const AddResourceModal = (props) => {
 
 const ChoiceModal = (props) => {
   const {choice} = props;
+  const removeChoice = () => {
+      if (typeof(props.onChoiceDelete) === 'function') {
+          props.onChoiceDelete();
+      }
+  };
 
   return (
     <>
-      <p>{choice.label}. {choice.content}</p>
+    <CTableRow>
+          <CFormLabel>{choice.label}. {choice.content}</CFormLabel>
+          {/* <CButton onClick={() => removeChoice()}>Delete</CButton> */}
+          <CButton size="sm" color="danger" style={{float: 'right'}} onClick={() => removeChoice()}>Delete</CButton>
+          </CTableRow>
     </>
   )
 }
@@ -102,6 +111,16 @@ const AddQuestionModal = (props) => {
     }
   }
 
+  function fetchlistChoice() {
+    console.log(choices);
+    return choices;
+  }
+
+  function removeChoice(choiceToRemove) {
+    const newChoices = choices.filter((choice) => choice != choiceToRemove);
+    setChoices(newChoices);
+  }
+
   function addChoice() {
     const newChoice = {
       label: label,
@@ -109,6 +128,10 @@ const AddQuestionModal = (props) => {
     }
     setChoices([...choices, newChoice]);
   }
+
+  useEffect(() => {
+    fetchlistChoice();
+  }, [choices]);
 
   return (
     <>
@@ -149,9 +172,17 @@ const AddQuestionModal = (props) => {
             </div>
             <div className="mb-3">
               <CFormLabel>Choice</CFormLabel>
-              {choices.map((choice) => {
-              return <ChoiceModal choice={choice} />;
-            })}
+              <div>
+                <CTable>
+                  <CTableBody>
+                {choices.map((choice) => {
+                return <ChoiceModal onChoiceDelete={() => {
+                  removeChoice(choice);
+                }} choice={choice} />;
+              })}
+              </CTableBody>
+              </CTable>
+              </div>
               <CFormInput
                 type="text"
                 placeholder="Label"
