@@ -1,4 +1,4 @@
-import { CCard, CCardHeader, CCardBody, CSpinner, CContainer, CTable, CTableHead, CTableBody, CTableRow, CTableHeaderCell, CTableDataCell, CButton, CModal, CModalHeader, CModalTitle, CModalBody, CForm, CFormLabel, CFormInput, CModalFooter, CRow, CListGroup } from "@coreui/react";
+import { CCard, CCardHeader, CCardBody, CSpinner, CTable, CTableHead, CTableBody, CTableRow, CTableHeaderCell, CTableDataCell, CButton, CModal, CModalHeader, CModalTitle, CModalBody, CForm, CFormLabel, CFormInput, CModalFooter, CRow, CListGroup, CNavGroup } from "@coreui/react";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getToeicQuestionGroupById } from "src/api/toeicQuestionGroup";
@@ -37,29 +37,131 @@ const HTMLEditor = (props) => {
   )
 }
 
-const AddResourceModal = (props) => {
+const ResolveToeicItemContentType = (props) => {
+  const { type } = props;
+  if (type == "AUDIO") {
+    return (
+      <input type="file" />
+    )
+  } else if (type == "IMAGE") {
+    return (
+      <input type="file" />
+    )
+  } else if (type == "HTML") {
+    return (
+      <textarea style={{ width: "200%", height: "200px" }}/>
+    )
+  } else {
+    return <></>
+  }
+}
+
+const AddGroupContent = (props) => {
   const [visible, setVisible] = useState(false);
   const testContent = props.testContent;
+  const  [type, setType] = useState('');
+
+  useEffect(() => {
+    setType('AUDIO');
+  }, []);
+
+  function onChangeType (typeSelect) {
+    setType(typeSelect);
+    console.log(typeSelect);
+  }
+
+  const handleCreateResource = (e) => {
+    if (e) {
+      e.preventDefault();
+    }
+  }
 
   return (
     <>
-      <CButton size="sm" color="success" className="text-white" onClick={() => setVisible(!visible)}>Add topic</CButton>
+      <CButton size="sm" color="success" className="text-white" onClick={() => setVisible(!visible)}>Add group content</CButton>
       <CModal backdrop="static" visible={visible} onClose={() => setVisible(false)}>
         <CModalHeader>
-          <CModalTitle>Add topic</CModalTitle>
+          <CModalTitle>Add group content</CModalTitle>
         </CModalHeader>
         <CModalBody>
           <CForm
-            onSubmit={(e) => handleCreateTopic(e)}
+            onSubmit={(e) => handleCreateResource(e)}
           >
-            <HTMLEditor />
+            <CTableRow>
+              <CFormLabel htmlFor="topic">Type</CFormLabel>
+              <select style={{ marginLeft: "10px" }} selected={''} onChange={(e) => onChangeType(e.target.value)}>
+                <option value="AUDIO">Audio</option>
+                <option value="IMAGE">Image</option>
+                <option value="HTML">HTML</option>
+              </select>
+            </CTableRow>
+            <CTableRow>
+              <CFormLabel htmlFor="topic" style={{ marginRight: "10px" }}>Content</CFormLabel>
+              <ResolveToeicItemContentType type={type} />
+            </CTableRow>
           </CForm>
         </CModalBody>
         <CModalFooter>
           <CButton color="secondary" onClick={() => setVisible(false)}>
             Close
           </CButton>
-          <CButton color="primary" onClick={() => handleCreateTopic(null)}>Save changes</CButton>
+          <CButton color="primary" onClick={() => handleCreateResource(null)}>Save changes</CButton>
+        </CModalFooter>
+      </CModal>
+    </>
+  )
+}
+
+const AddGroupTranscript = (props) => {
+  const [visible, setVisible] = useState(false);
+  const testContent = props.testContent;
+  const  [type, setType] = useState('');
+
+  useEffect(() => {
+    setType('AUDIO');
+  }, []);
+
+  function onChangeType (typeSelect) {
+    setType(typeSelect);
+    console.log(typeSelect);
+  }
+
+  const handleCreateResource = (e) => {
+    if (e) {
+      e.preventDefault();
+    }
+  }
+
+  return (
+    <>
+      <CButton size="sm" color="success" className="text-white" onClick={() => setVisible(!visible)}>Add group transcript</CButton>
+      <CModal backdrop="static" visible={visible} onClose={() => setVisible(false)}>
+        <CModalHeader>
+          <CModalTitle>Add group transcript</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <CForm
+            onSubmit={(e) => handleCreateResource(e)}
+          >
+            <CTableRow>
+              <CFormLabel htmlFor="topic">Type</CFormLabel>
+              <select style={{ marginLeft: "10px" }} selected={''} onChange={(e) => onChangeType(e.target.value)}>
+                <option value="AUDIO">Audio</option>
+                <option value="IMAGE">Image</option>
+                <option value="HTML">HTML</option>
+              </select>
+            </CTableRow>
+            <CTableRow>
+              <CFormLabel htmlFor="topic" style={{ marginRight: "10px" }}>Content</CFormLabel>
+              <ResolveToeicItemContentType type={type} />
+            </CTableRow>
+          </CForm>
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setVisible(false)}>
+            Close
+          </CButton>
+          <CButton color="primary" onClick={() => handleCreateResource(null)}>Save changes</CButton>
         </CModalFooter>
       </CModal>
     </>
@@ -77,8 +179,7 @@ const ChoiceModal = (props) => {
   return (
     <>
     <CTableRow>
-          <CFormLabel>{choice.label}. {choice.content}</CFormLabel>
-          {/* <CButton onClick={() => removeChoice()}>Delete</CButton> */}
+          <CFormLabel>{choice.label}. {choice.content} (Explain: {choice.explain})</CFormLabel>
           <CButton size="sm" color="danger" style={{float: 'right'}} onClick={() => removeChoice()}>Delete</CButton>
           </CTableRow>
     </>
@@ -90,8 +191,9 @@ const AddQuestionModal = (props) => {
   const testContent = props.testContent;
   const [questionNumber, setQuestionnumber] = useState(0);
   const [question, setQuestion] = useState('');
+  const [explain, setExplain] = useState('');
   const [correctAnswer, setCorrectAnswer] = useState('');
-  const [choices, setChoices] = useState([]); // [{label: 'A', content: 'How are you?'}
+  const [choices, setChoices] = useState([]); 
   const [label, setLabel] = useState('');
   const [content, setContent] = useState('');
 
@@ -124,7 +226,8 @@ const AddQuestionModal = (props) => {
   function addChoice() {
     const newChoice = {
       label: label,
-      content: content
+      content: content,
+      explain: explain
     }
     setChoices([...choices, newChoice]);
   }
@@ -165,7 +268,6 @@ const AddQuestionModal = (props) => {
               <CFormInput
                 type="text"
                 placeholder="A"
-                value={correctAnswer}
                 onChange={(e) => setCorrectAnswer(e.target.value)}
               />
             </div>
@@ -192,6 +294,12 @@ const AddQuestionModal = (props) => {
                 placeholder="Content"
                 style={{ marginTop: 10 }}
                 onChange={(e) => setContent(e.target.value)}
+              />
+              <CFormInput
+                type="text"
+                placeholder="Explain"
+                style={{ marginTop: 10 }}
+                onChange={(e) => setExplain(e.target.value)}
               />
             </div>
             <CButton color="success" onClick={() => addChoice()}>
@@ -270,7 +378,7 @@ const ToeicSingleQuestion = () => {
           </CTable>
           <div className="mb-3">
             <div className="text-center">
-              <AddResourceModal
+              <AddGroupContent
 
               />
             </div>
@@ -306,7 +414,7 @@ const ToeicSingleQuestion = () => {
           </CTable>
           <div className="mb-3">
             <div className="text-center">
-              <AddResourceModal
+              <AddGroupTranscript
 
               />
             </div>

@@ -9,4 +9,13 @@ const getToeicQuestionById = async (id) => {
 const getToeicQuestionByPartId = async (partId) => {
   return await contextInstance.get(`api/toeic/toeic-question-group/get-groups-by-part/${partId}`);
 };
-export { getToeicQuestion, getToeicQuestionById, getToeicQuestionByPartId };
+const createToeicQuestion = async (groupId, questionNumber, content, correctAnswer, toeicChoices) => {
+  return await contextInstance.post(`api/toeic/toeic-question/create-new-question`, {
+    groupId, 
+    questionNumber, 
+    content, 
+    correctAnswer, 
+    toeicChoices
+  });
+};
+export { getToeicQuestion, getToeicQuestionById, getToeicQuestionByPartId, createToeicQuestion };
