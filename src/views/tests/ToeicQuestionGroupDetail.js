@@ -66,6 +66,120 @@ const AddResourceModal = (props) => {
   )
 }
 
+const ChoiceModal = (props) => {
+  const {choice} = props;
+
+  return (
+    <>
+      <p>{choice.label}. {choice.content}</p>
+    </>
+  )
+}
+
+const AddQuestionModal = (props) => {
+  const [visible, setVisible] = useState(false);
+  const testContent = props.testContent;
+  const [questionNumber, setQuestionnumber] = useState(0);
+  const [question, setQuestion] = useState('');
+  const [correctAnswer, setCorrectAnswer] = useState('');
+  const [choices, setChoices] = useState([]); // [{label: 'A', content: 'How are you?'}
+  const [label, setLabel] = useState('');
+  const [content, setContent] = useState('');
+
+  const handleCreateQuestion = (e) => {
+    if (e) {
+      e.preventDefault();
+    }
+  
+    if (!questionNumber.toString.trim()) {
+      alert('Question number cannot be null');
+      return;
+    }
+  
+    if (!correctAnswer.toString.trim()) {
+      alert('correct answer cannot be null');
+      return;
+    }
+  }
+
+  function addChoice() {
+    const newChoice = {
+      label: label,
+      content: content
+    }
+    setChoices([...choices, newChoice]);
+  }
+
+  return (
+    <>
+      <CButton size="sm" color="success" className="text-white" onClick={() => setVisible(!visible)}>Add question</CButton>
+      <CModal backdrop="static" visible={visible} onClose={() => setVisible(false)}>
+        <CModalHeader>
+          <CModalTitle>Add question</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <CForm
+            onSubmit={(e) => handleCreateQuestion(e)}
+          >
+            <div className="mb-3">
+              <CFormLabel>Question number</CFormLabel>
+              <CFormInput
+                type="text"
+                placeholder="10"
+                onChange={(e) => setQuestionnumber(e.target.value)}
+              />
+            </div>
+            <div className="mb-3">
+              <CFormLabel>Question</CFormLabel>
+              <CFormInput
+                type="text"
+                placeholder="10"
+                onChange={(e) => setQuestion(e.target.value)}
+              />
+            </div>
+            <div className="mb-3">
+              <CFormLabel>Corect Answer
+              <CFormInput
+                type="text"
+                placeholder="A"
+                value={correctAnswer}
+                onChange={(e) => setCorrectAnswer(e.target.value)}
+              />
+              </CFormLabel>
+            </div>
+            <div className="mb-3">
+              <CFormLabel>Choice</CFormLabel>
+              {choices.map((choice) => {
+              return <ChoiceModal choice={choice} />;
+            })}
+              <CFormInput
+                type="text"
+                placeholder="Label"
+                onChange={(e) => setLabel(e.target.value)}
+              />
+              <CFormInput
+                type="text"
+                placeholder="Content"
+                style={{ marginTop: 10 }}
+                onChange={(e) => setContent(e.target.value)}
+              />
+            </div>
+            <CButton color="secondary" onClick={() => addChoice()}>
+              Add Choice
+            </CButton>
+          </CForm>
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setVisible(false)}>
+            Close
+          </CButton>
+          <CButton color="primary" onClick={() => handleCreateQuestion(null)}>Save changes</CButton>
+        </CModalFooter>
+      </CModal>
+    </>
+  )
+}
+
 const ToeicSingleQuestion = () => {
   const params = useParams();
   const [questionGroup, setQuestionGroup] = useState();
@@ -204,7 +318,15 @@ const ToeicSingleQuestion = () => {
           </CCard>
         )
       })}
+      
+      <div className="mb-3">
+          <div className="text-center">
+            <AddQuestionModal
+            />
+          </div>
+        </div>
     </>
   );
+  
 };
 export default ToeicSingleQuestion;
