@@ -19,7 +19,7 @@ ftp.close()
 
 print(f'Upload fe.zip ok')
 
-(_, stdout, stderr) = ssh.exec_command('cd /root/ToeicFEAdmin/; unzip fe.zip; cp -rf fe/* /www/toeic-admin-fe/;')
+(_, stdout, stderr) = ssh.exec_command('cd /root/ToeicFEAdmin/; unzip -o fe.zip; cp -rf fe/* /www/toeic-admin-fe/;')
 exit_status = stdout.channel.recv_exit_status()
 
 print('\n'.join(stdout.readlines()))
