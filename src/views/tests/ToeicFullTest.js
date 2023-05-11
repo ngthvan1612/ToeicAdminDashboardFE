@@ -21,6 +21,7 @@ import { listToeicFullTests } from "src/api/toeicFullTest";
 import { Link, useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  console.log("hihi");
   const [isLoading, setIsLoading] = useState(true);
   const [toeicFullTests, setToeicFullTests] = useState([]);
   const navigate = useNavigate();
