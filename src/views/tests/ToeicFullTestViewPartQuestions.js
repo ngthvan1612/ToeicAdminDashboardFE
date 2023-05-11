@@ -13,7 +13,10 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from "@coreui/react";
-import { getToeicQuestion, getToeicQuestionByPartId } from "src/api/toeicQuestion";
+import {
+  getToeicQuestion,
+  getToeicQuestionByPartId,
+} from "src/api/toeicQuestion";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import QuestionModal from "./QuestionModal";
 import {
@@ -22,6 +25,7 @@ import {
 } from "src/api/toeicQuestionGroup";
 
 const ToeicFullTestViewPartQuestions = () => {
+  console.log("hihi");
   const params = useParams();
   console.log(params);
   const [isLoading, setIsLoading] = useState(true);
