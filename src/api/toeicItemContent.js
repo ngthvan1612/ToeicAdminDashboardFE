@@ -4,10 +4,10 @@ const createToeicQuestionItem = async ({contentType, stringContent, content, que
   const formData = new FormData();
 
   formData.append("contentType", contentType);
-  formData.append("stringContent", stringContent);
+  formData.append("stringContent", stringContent ?? null);
   formData.append("content", content ?? null);
-  formData.append("questionContentId", questionContentId ?? 0);
-  formData.append("questionTranscriptId", questionTranscriptId ?? 0);
+  formData.append("questionContentId", questionContentId);
+  formData.append("questionTranscriptId", questionTranscriptId);
 
   return await contextInstance.post(
     `api/toeic/toeic-item-content/create-new-item-content`,

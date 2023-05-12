@@ -60,7 +60,7 @@ const ResolveToeicItemContentType = (props) => {
     )
   } else if (type == "IMAGE") {
     return (
-      <input type="file" ref={uploadFileRef} onChange={(e) => setContent(e.target.files)[0]}/>
+      <input type="file" ref={uploadFileRef} onChange={(e) => setContent(e.target.files[0])}/>
     )
   } else if (type == "HTML") {
     return (
@@ -197,7 +197,8 @@ const AddGroupTranscript = (props) => {
       createToeicQuestionItem({
         contentType: type,
         content: content,
-        questionTranscriptId: parseInt(props.questionGroupId)
+        questionTranscriptId: "",
+        questionContentId: parseInt(props.questionGroupId)
       }).then(res => {
         console.log(res);
         if (res.status === 200) {
@@ -214,6 +215,7 @@ const AddGroupTranscript = (props) => {
       createToeicQuestionItem({
         contentType: type,
         stringContent: content,
+        questionContentId: "",
         questionTranscriptId: parseInt(props.questionGroupId)
       }).then(res => {
         console.log(res);
