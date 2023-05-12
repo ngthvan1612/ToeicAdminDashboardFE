@@ -98,6 +98,7 @@ const AddGroupContent = (props) => {
       createToeicQuestionItem({
         contentType: type,
         content: content,
+        questionTranscriptId: "",
         questionContentId: parseInt(props.questionGroupId)
       }).then(res => {
         console.log(res);
@@ -115,7 +116,8 @@ const AddGroupContent = (props) => {
       createToeicQuestionItem({
         contentType: type,
         stringContent: content,
-        questionContentId: parseInt(props.questionGroupId)
+        questionContentId: "",
+        questionTranscriptId: parseInt(props.questionGroupId)
       }).then(res => {
         console.log(res);
         if (res.status === 200) {
@@ -150,7 +152,6 @@ const AddGroupContent = (props) => {
               <select style={{ marginLeft: "10px" }} selected={''} onChange={(e) => onChangeType(e.target.value)}>
                 <option value="AUDIO">Audio</option>
                 <option value="IMAGE">Image</option>
-                <option value="HTML">HTML</option>
               </select>
             </CTableRow>
             <CTableRow>
@@ -176,7 +177,7 @@ const AddGroupTranscript = (props) => {
   const [content, setContent] = useState();
 
   useEffect(() => {
-    setType('AUDIO');
+    setType('HTML');
   }, []);
 
   function onChangeType (typeSelect) {
@@ -237,10 +238,10 @@ const AddGroupTranscript = (props) => {
 
   return (
     <>
-      <CButton size="sm" color="success" className="text-white" onClick={() => setVisible(!visible)}>Add group content</CButton>
+      <CButton size="sm" color="success" className="text-white" onClick={() => setVisible(!visible)}>Add group transcript</CButton>
       <CModal backdrop="static" visible={visible} onClose={() => setVisible(false)}>
         <CModalHeader>
-          <CModalTitle>Add group content</CModalTitle>
+          <CModalTitle>Add group transcript</CModalTitle>
         </CModalHeader>
         <CModalBody>
           <CForm
@@ -249,8 +250,6 @@ const AddGroupTranscript = (props) => {
             <CTableRow>
               <CFormLabel htmlFor="topic">Type</CFormLabel>
               <select style={{ marginLeft: "10px" }} selected={''} onChange={(e) => onChangeType(e.target.value)}>
-                <option value="AUDIO">Audio</option>
-                <option value="IMAGE">Image</option>
                 <option value="HTML">HTML</option>
               </select>
             </CTableRow>
